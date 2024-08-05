@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import IngredientForm from '../components/IngredientForm.jsx';
-import IngredientList from '../components/IngredientList.jsx';
-
-
+import { useState, useEffect } from "react";
+import axios from "axios";
+import IngredientForm from "../components/IngredientForm.jsx";
+import IngredientList from "../components/IngredientList.jsx";
+import { Container, Typography, Box } from "@mui/material";
 
 const Home = () => {
   const [ingredients, setIngredients] = useState([]);
 
   const fetchIngredients = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/ingredients');
+      const response = await axios.get(
+        "http://localhost:5000/api/ingredients",
+        {
+          withCredentials: true, // Asegúrate de incluir credenciales si es necesario
+        }
+      );
+      console.log("Fetched ingredients:", response.data); // Verificar datos obtenidos
       setIngredients(response.data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching ingredients:", err);
     }
   };
 
   const deleteIngredient = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/ingredients/${id}`);
+      await axios.delete(`http://localhost:5000/api/ingredients/${id}`, {
+        withCredentials: true, // Asegúrate de incluir credenciales si es necesario
+      });
       fetchIngredients();
     } catch (err) {
-      console.error(err);
+      console.error("Error deleting ingredient:", err);
     }
   };
 
@@ -30,10 +37,18 @@ const Home = () => {
     const newQuantity = prompt("Nueva cantidad:");
     if (newQuantity) {
       try {
-        await axios.put(`http://localhost:5000/api/ingredients/${id}`, { quantity: newQuantity });
+        await axios.put(
+          `http://localhost:5000/api/ingredients/${id}`,
+          {
+            quantity: newQuantity,
+          },
+          {
+            withCredentials: true, // Asegúrate de incluir credenciales si es necesario
+          }
+        );
         fetchIngredients();
       } catch (err) {
-        console.error(err);
+        console.error("Error updating ingredient:", err);
       }
     }
   };
@@ -43,11 +58,17 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Stock de la Cocina</h1>
+    <Container>
+      <Typography variant="h3" component="h1" gutterBottom>
+        Stock de la Cocina
+      </Typography>
       <IngredientForm fetchIngredients={fetchIngredients} />
-      <IngredientList ingredients={ingredients} deleteIngredient={deleteIngredient} updateIngredient={updateIngredient} />
-    </div>
+      <IngredientList
+        ingredients={ingredients}
+        deleteIngredient={deleteIngredient}
+        updateIngredient={updateIngredient}
+      />
+    </Container>
   );
 };
 
