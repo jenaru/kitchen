@@ -17,6 +17,9 @@ const IngredientForm = ({ fetchIngredients }) => {
         unit,
       });
       fetchIngredients();
+      setName(""); // Limpiar el campo de nombre
+      setQuantity(0); // Limpiar el campo de cantidad
+      setUnit(""); // Limpiar el campo de unidad
     } catch (err) {
       console.error(err);
     }

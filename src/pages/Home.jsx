@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import IngredientForm from "../components/IngredientForm.jsx";
 import IngredientList from "../components/IngredientList.jsx";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 const Home = () => {
   const [ingredients, setIngredients] = useState([]);
@@ -33,23 +33,18 @@ const Home = () => {
     }
   };
 
-  const updateIngredient = async (id) => {
-    const newQuantity = prompt("Nueva cantidad:");
-    if (newQuantity) {
-      try {
-        await axios.put(
-          `http://localhost:5000/api/ingredients/${id}`,
-          {
-            quantity: newQuantity,
-          },
-          {
-            withCredentials: true, // Asegúrate de incluir credenciales si es necesario
-          }
-        );
-        fetchIngredients();
-      } catch (err) {
-        console.error("Error updating ingredient:", err);
-      }
+  const updateIngredient = async (id, updatedData) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/ingredients/${id}`,
+        updatedData,
+        {
+          withCredentials: true,
+        }
+      );
+      fetchIngredients();
+    } catch (err) {
+      console.error("Error updating ingredient:", err);
     }
   };
 

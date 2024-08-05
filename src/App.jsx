@@ -1,6 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").then(
+      (registration) => {
+        console.log(
+          "ServiceWorker registration successful with scope: ",
+          registration.scope
+        );
+      },
+      (err) => {
+        console.log("ServiceWorker registration failed: ", err);
+      }
+    );
+  });
+}
+
 const App = () => {
   return (
     <BrowserRouter>
