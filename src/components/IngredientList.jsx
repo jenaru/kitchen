@@ -11,14 +11,15 @@ import {
   DialogContent,
   DialogTitle,
   Button,
-  Box,
   TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
+import IngredientSearch from "./IngredientSearch"; // Importar el nuevo componente
+import OrderList from "./OrderList"; // Importar el componente OrderList
 
+// Componente funcional que recibe ingredientes y funciones para eliminarlos y actualizarlos como props
 const IngredientList = ({
   ingredients,
   deleteIngredient,
@@ -26,6 +27,7 @@ const IngredientList = ({
 }) => {
   console.log("Rendering IngredientList with ingredients:", ingredients);
 
+  // Estados para manejar la apertura de diálogos, ingrediente seleccionado y otros datos de edición/búsqueda
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
@@ -35,16 +37,19 @@ const IngredientList = ({
   const [editUnit, setEditUnit] = useState("");
   const [orderList, setOrderList] = useState([]);
 
+  // Función para abrir el diálogo de eliminación y seleccionar el ingrediente a eliminar
   const handleClickOpenDelete = (ingredient) => {
     setSelectedIngredient(ingredient);
     setOpenDelete(true);
   };
 
+  // Función para cerrar el diálogo de eliminación
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setSelectedIngredient(null);
   };
 
+  // Función para abrir el diálogo de edición y cargar datos del ingrediente a editar
   const handleClickOpenEdit = (ingredient) => {
     setSelectedIngredient(ingredient);
     setEditName(ingredient.name);
@@ -53,16 +58,19 @@ const IngredientList = ({
     setOpenEdit(true);
   };
 
+  // Función para cerrar el diálogo de edición
   const handleCloseEdit = () => {
     setOpenEdit(false);
     setSelectedIngredient(null);
   };
 
+  // Función para eliminar el ingrediente seleccionado
   const handleDelete = () => {
     deleteIngredient(selectedIngredient._id);
     handleCloseDelete();
   };
 
+  // Función para actualizar el ingrediente seleccionado con los nuevos datos
   const handleEdit = () => {
     updateIngredient(selectedIngredient._id, {
       name: editName,
@@ -72,16 +80,19 @@ const IngredientList = ({
     handleCloseEdit();
   };
 
+  // Función para agregar un ingrediente a la lista de pedidos
   const handleAddToOrderList = (ingredient) => {
     setOrderList((prevList) => [...prevList, ingredient]);
   };
 
+  // Función para remover un ingrediente de la lista de pedidos
   const handleRemoveFromOrderList = (ingredient) => {
     setOrderList((prevList) =>
       prevList.filter((item) => item._id !== ingredient._id)
     );
   };
 
+  // Función para editar un ingrediente de la lista de pedidos
   const handleEditOrderList = (index) => {
     const ingredient = orderList[index];
     setSelectedIngredient(ingredient);
@@ -90,6 +101,8 @@ const IngredientList = ({
     setEditUnit(ingredient.unit);
     setOpenEdit(true);
   };
+
+  // Función para copiar la lista de pedidos al portapapeles
   const handleCopyOrderList = () => {
     const orderListText = orderList
       .map(
@@ -106,6 +119,8 @@ const IngredientList = ({
         console.error("Error al copiar la lista de pedido:", err);
       });
   };
+
+  // Función para actualizar un ingrediente de la lista de pedidos después de editarlo
   const handleEditOrderItem = () => {
     const updatedOrderList = orderList.map((item) =>
       item._id === selectedIngredient._id
@@ -116,6 +131,7 @@ const IngredientList = ({
     handleCloseEdit();
   };
 
+  // Filtrar ingredientes según el término de búsqueda y ordenar alfabéticamente
   const filteredIngredients = ingredients
     .slice() // Crear una copia del array para no mutar el original
     .sort((a, b) => a.name.localeCompare(b.name)) // Ordenar en orden alfabético ascendente
@@ -125,52 +141,15 @@ const IngredientList = ({
 
   return (
     <>
-      <Box sx={{ mb: 4 }}>
-        <TextField
-          label="Buscar Ingrediente"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          fullWidth
-        />
-      </Box>
-      <Box
-        sx={{
-          mt: 4,
-          p: 2,
-          backgroundColor: "#f5f5f5",
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-        }}>
-        <Typography variant="h6">Lista de Pedido</Typography>
-        <List>
-          {orderList.map((ingredient, index) => (
-            <ListItem key={index} disableGutters>
-              <ListItemText
-                primary={
-                  <Typography variant="body2">
-                    {ingredient.name} - {ingredient.quantity} {ingredient.unit}
-                  </Typography>
-                }
-              />
-              <IconButton onClick={() => handleEditOrderList(index)}>
-                <EditIcon color="primary" />
-              </IconButton>
-              <IconButton onClick={() => handleRemoveFromOrderList(ingredient)}>
-                <RemoveShoppingCartIcon color="error" />
-              </IconButton>
-            </ListItem>
-          ))}
-        </List>
-        {orderList.length > 0 && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCopyOrderList}>
-            Copiar Lista de Pedido
-          </Button>
-        )}
-      </Box>
+      {/* Utilizar el componente IngredientSearch */}
+      <IngredientSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <OrderList
+        orderList={orderList}
+        handleEditOrderList={handleEditOrderList}
+        handleRemoveFromOrderList={handleRemoveFromOrderList}
+        handleCopyOrderList={handleCopyOrderList}
+      />
+
       <List>
         {filteredIngredients.map((ingredient) => (
           <ListItem key={ingredient._id} disableGutters>
@@ -257,6 +236,7 @@ const IngredientList = ({
   );
 };
 
+// Definición de PropTypes para asegurar que las props tienen el tipo correcto
 IngredientList.propTypes = {
   ingredients: PropTypes.arrayOf(
     PropTypes.shape({
