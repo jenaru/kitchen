@@ -3,9 +3,14 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import ingredientsRouter from "./routes/ingredients.js";
+import path from "path";
+import { fileURLToPath } from "url";
 import process from "process";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -16,7 +21,6 @@ const allowedOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Permite solicitudes sin origen (como aplicaciones móviles o curl)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         var msg =
@@ -51,6 +55,10 @@ connectDB();
 
 app.use("/api/ingredients", ingredientsRouter);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.use(express.static(path.join(__dirname, "../build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
+
+export default app;
