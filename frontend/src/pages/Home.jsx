@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/api.js"; // Asegúrate de actualizar con la ruta correcta
 import IngredientForm from "../components/IngredientForm.jsx";
 import IngredientList from "../components/IngredientList.jsx";
 import { Container, Typography } from "@mui/material";
@@ -9,12 +9,7 @@ const Home = () => {
 
   const fetchIngredients = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/ingredients",
-        {
-          withCredentials: true, // Asegúrate de incluir credenciales si es necesario
-        }
-      );
+      const response = await api.get("/api/ingredients");
       console.log("Fetched ingredients:", response.data); // Verificar datos obtenidos
       setIngredients(response.data);
     } catch (err) {
@@ -24,9 +19,7 @@ const Home = () => {
 
   const deleteIngredient = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/ingredients/${id}`, {
-        withCredentials: true, // Asegúrate de incluir credenciales si es necesario
-      });
+      await api.delete(`/api/ingredients/${id}`);
       fetchIngredients();
     } catch (err) {
       console.error("Error deleting ingredient:", err);
@@ -35,13 +28,7 @@ const Home = () => {
 
   const updateIngredient = async (id, updatedData) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/ingredients/${id}`,
-        updatedData,
-        {
-          withCredentials: true,
-        }
-      );
+      await api.put(`/api/ingredients/${id}`, updatedData);
       fetchIngredients();
     } catch (err) {
       console.error("Error updating ingredient:", err);

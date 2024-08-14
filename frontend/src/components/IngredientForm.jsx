@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/api"; // Asegúrate de actualizar con la ruta correcta
 import { TextField, Button, Box } from "@mui/material";
 
 const IngredientForm = ({ fetchIngredients }) => {
@@ -11,7 +11,7 @@ const IngredientForm = ({ fetchIngredients }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/ingredients", {
+      await api.post("/api/ingredients", {
         name,
         quantity,
         unit,
